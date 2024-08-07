@@ -20,25 +20,18 @@ use Monolog\Handler\StreamHandler;
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'add_user', methods:['post'] )]
-    public function create(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, Request $request): JsonResponse
+    public function create(UserRepository $userRepository, MessageBusInterface $messageBus, Request $request): JsonResponse
     {
-        $new_user = new User();
-        $new_user->setEmail($request->request->get('email'));
-        $new_user->setFirstName($request->request->get('first_name'));
-        $new_user->setLastName($request->request->get('last_name'));
+        $data = [
+            'email' => $request->request->get('email'),
+            'first_name' => $request->request->get('first_name'),
+            'last_name' => $request->request->get('last_name')
+        ];
 
-        $entityManager->persist($new_user);
-        $entityManager->flush();
-
+        $new_user = $userRepository->store($data);
         if ($new_user->getId()) {
             $messageBus->dispatch(new CreateUserNotification($new_user->getId()));
         }
-        
-        $data = [
-            'email' => $new_user->getEmail(),
-            'first_name' => $new_user->getFirstName(),
-            'last_name' => $new_user->getLastName(),
-        ];
 
         return $this->json($data);
     }

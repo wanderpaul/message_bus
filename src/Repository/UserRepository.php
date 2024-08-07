@@ -28,6 +28,20 @@ class UserRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function store($data)
+    {
+        $new_user = new User();
+        $new_user->setEmail($data['email']);
+        $new_user->setFirstName($data['first_name']);
+        $new_user->setLastName($data['last_name']);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($new_user);
+        $entityManager->flush();
+
+        return $new_user;
+    }
+
 
     //    /**
     //     * @return User[] Returns an array of User objects
