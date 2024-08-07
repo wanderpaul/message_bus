@@ -12,12 +12,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use App\Message\CreateUserNotification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 
 class UserController extends AbstractController
 {
     #[Route('/user', name: 'add_user', methods:['post'] )]
-    public function create(EntityManagerInterface $entityManager, UserRepository $userRepository, MessageBusInterface $messageBus, Request $request): JsonResponse
+    public function create(EntityManagerInterface $entityManager, MessageBusInterface $messageBus, Request $request): JsonResponse
     {
         $new_user = new User();
         $new_user->setEmail($request->request->get('email'));
@@ -36,6 +39,7 @@ class UserController extends AbstractController
             'first_name' => $new_user->getFirstName(),
             'last_name' => $new_user->getLastName(),
         ];
+
         return $this->json($data);
     }
 }
