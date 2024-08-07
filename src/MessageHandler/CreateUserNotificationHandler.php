@@ -13,6 +13,7 @@ class CreateUserNotificationHandler
 {
     public function __invoke(CreateUserNotification $user)
     {   
+        echo "handled";
         $logMessage = "User created through api: {$user->getUserId()} ";
         $notification = new Notification(new Logger('info'));
         $notification->logToFile($logMessage);
